@@ -1,24 +1,21 @@
 # include<stdio.h>
 # include<math.h>
 #include "malloc.h"
-#define MAXVEX  100             //最大顶点数，应由用户定义
+#define MAXVEX  200             //最大顶点数，应由用户定义
 #define INFINITY   65535               //用65535来代表无穷大
 int max_w = 1000000;
 typedef struct node
 {
     int data;
     struct node *next;
-};
+}node;
 //使用链栈来存放一条完整路径的Value值
 node *v = NULL; //栈指针
 int tem_Charm_Value;
 int min_Charm_Value = max_w; //保存最终答案
 
 //栈操作函数
-void initial(node *p)
-{
-    p->next = NULL;
-}
+
 void push(node **top, int x)
 {
     node *p;
@@ -96,33 +93,38 @@ void printGraph(Graph *g)
     }
 }
 
-void DFS(Graph *g,int i)
+int DFS(Graph *g,int i)
 {
-    for (int j = 0; j < g->numVertexes; j++)
+    if (i == g->numVertexes - 1)
     {
+        //printf("END\n");
+        tem_Charm_Value = findMax(v);
+        if (tem_Charm_Value < min_Charm_Value)
+        {
+            min_Charm_Value = tem_Charm_Value;
+        }
+        return 1;
+    }
+    for (int j = i; j < g->numVertexes; j++)
+    {
+        //printf("%d:%d\n",i,j);
         if (g->arc[i][j] != INFINITY)
         {
             push(&v, g->arc[i][j]);
-            if (j == g->numVertexes - 1)
-            {
-                tem_Charm_Value = findMax(v);
-                if (tem_Charm_Value < min_Charm_Value)
-                {
-                    min_Charm_Value = tem_Charm_Value;
-                }
-            }
-            else
-            {
-                DFS(g, j);
-            }
+            //printf("前面:%d\n", g->arc[i][j]);
+            DFS(g, j);
+            //printf("后面:%d\n", g->arc[i][j]);
             pop(&v);
         }
     }
+    return 0;
 }
 
 void DFSTraverse(Graph *g)
 {
-    initial(v);
+    //printf("Initial\n");
+    //initial(v);
+    //printf("DFS 0\n");
     DFS(g, 0);
 }
 
